@@ -1,263 +1,209 @@
 import time
 from datetime import datetime
 
-
-class MenuItem:
-    def __init__(self, name, price, description=""):
-        self.name = name
-        self.price = price
-        self.description = description
-
-    def __str__(self):
-        return f"{self.name} — {self.price} ₽"
-
-
-class Cart:
-    def __init__(self):
-        self.items = []
-
-    def add(self, item, quantity=1):
-        for i, (existing_item, qty) in enumerate(self.items):
-            if existing_item.name == item.name:
-                self.items[i] = (existing_item, qty + quantity)
-                return
-        self.items.append((item, quantity))
-
-    def remove(self, item_name):
-        self.items = [(i, q) for i, q in self.items if i.name != item_name]
-
-    def total(self):
-        return sum(item.price * qty for item, qty in self.items)
-
-    def count(self):
-        return sum(qty for _, qty in self.items)
-
-    def display(self):
-        if not self.items:
-            print("\nКорзина пуста. Вы как тот самый программист: работает, но ничего не делает.\n")
-            return
-        print("\n" + "ඞ" * 50)
-        print(" ВАША КОРЗИНА (Путь к финансовому краху)")
-        for item, qty in self.items:
-            subtotal = item.price * qty
-            print(f"  • {item.name}  x{qty}  —  {subtotal} ₽")
-        print("☭" * 50)
-        print(f"  Итого к оплате: {self.total()} ₽")
-        print("ඞ" * 50 + "\n")
-
-
-MENU = {
+menu = {
     "1": {
-        "name": "Пиццa's",
+        "name": "Пицца",
         "items": [
-            MenuItem("Маргарита с Авито", 150, "Продам в связи с переездом. Немного помята котом, но есть можно(*не отравитесь*)"),
-            MenuItem("Пепперони для интроверта", 690, "Курьер оставит у двери, нагадит, постучит и убежит, не звоня(вроде всё правильно)"),
-            MenuItem("Гавайская (за это сажают)", 650, "Рискните, если не боитесь итальянской мафии и ананасов"),
-            MenuItem("Пицца 'Дырка от бублика'", 0, "В меню есть, но мы её уже съели. Извинитесь за это! Иначе заяву накатим!"),
-            MenuItem("Четыре сына", 100000, "Как не удивительно, но тут 4 сына (мама будет гордится нашим заведением😎)"),
+            {"name": "Маргарита с Авито", "price": 150, "desc": "Продан в связи с переездом. Немного помята котом, но есть можно(не отравитесь)"},
+            {"name": "Пепперони для интроверта", "price": 690, "desc": "Курьер оставит у двери, нагадит, постучит и убежит, не звоня(вроде всё правильно)"},
+            {"name": "Гавайская (за это сажают)", "price": 650, "desc": "Рискните, если не боитесь итальянской мафии и ананасов"},
+            {"name": "Пицца 'Дырка от бублика'", "price": 0, "desc": "В мене есть, но мы её уже съели. Извинитесь за это! Иначе заяву накатим!"},
+            {"name": "Четыре сына", "price": 100000, "desc": "Как не удивительно, но тут 4 сына (мама будет гордиться нашим заведением)"},
         ]
     },
     "2": {
-        "name": "Бургер's",
+        "name": "Бургеры",
         "items": [
-            MenuItem("Бургер 'Шаурма в тесте'", 390, "Мы не знаем, что это, если-бы ы знали что это такое, но мы не знаем что это такое, но это есть (*вроде*) можно и не вызывает подозрения"),
-            MenuItem("Чизбургер 'Дед Инсайд'", 450, "Настолько грустный что вы не сможете его до есть, ставим наследство вашей бабушки"),
-            MenuItem("Бургер '💀'", 370, "Всё верно, ведб это 💀"),
-            MenuItem("Веганский бургер 'Поплачь'", 350, "Сделан из надежд, воздуха и слёз шеф-повара"),
-            MenuItem("CHICKEN GUN", 1488, "!CHICKEN GUN! !CHICKEN GUN! !CHICKEN GUN!"),
+            {"name": "Бургер 'Шаурма в тесте'", "price": 390, "desc": "Мы не знаем, что это, если бы вы знали что это такое, но вы не знали что это такое, но это есть (съедаете) можно и не вызывает подозрений"},
+            {"name": "Чизбургер 'Дед Инсайд'", "price": 450, "desc": "Сыр грустный, котлета тоже. 1000 - 7 = 999"},
+            {"name": "Бургер 'Свидетель из Фрязино'", "price": 370, "desc": "Настолько грустный что вы не сможете его до есть, ставим наследство вашей бабушке"},
+            {"name": "Веганский бургер 'Поплачь'", "price": 350, "desc": "Сделан из надежд, воздуха и слёз шеф-повара"},
+            {"name": "CHICKEN GUN", "price": 1488, "desc": "!CHICKEN GUN! !CHICKEN GUN! !CHICKEN GUN!"},
         ]
     },
     "3": {
-        "name": "Сушь's",
+        "name": "Суши",
         "items": [
-            MenuItem("Филадельфия 'Эконом'", 490, "Рыбу видели только по телевизору, но надеемся что вкус отличный"),
-            MenuItem("Ролл 'Токсик'", 450, "Будет манипулировать вами и оформит на вас кредит, пока вы его едите"),
-            MenuItem("Сет 'ㅤ'", 1290, "ㅤ"),
-            MenuItem("Ролл 'C4'", 520, "Готовил наш фирменный повар Данил Крышковец, псевдоним — donk(почему он тикает?)"),
-            MenuItem("Судак и Тудак", 2, "Судак и Тудак. Без комментариев..."),
+            {"name": "Филадельфия 'Эконом'", "price": 490, "desc": "Рыбу видели только по телевизору, но надеемся что вкус отличный"},
+            {"name": "Ролл 'Токсик'", "price": 450, "desc": "Будет манипулировать вами и оформит на вас кредит, пока вы его едите"},
+            {"name": "Сет '—'", "price": 1290, "desc": ""},
+            {"name": "Ролл 'С4'", "price": 520, "desc": "Готовил наш фирменный повар Данил Крышковец, псевдоним - dopk(почему он тикает)"},
+            {"name": "Судак и Тудак", "price": 2, "desc": "Судак и Тудак. Без комментариев..."},
         ]
     },
     "4": {
-        "name": "Суп's",
+        "name": "Супы",
         "items": [
-            MenuItem("Том Ям 'Вызовите скорую'", 420, "Настолько острый, что вы начнёте видеть звуки"),
-            MenuItem("Борщ 'Яд'", 290, "Безобидный борщ, в принципе как и название"),
-            MenuItem("Суп 'Доширак Делюкс'", 15000, "С добавкой в виде сухариков, надежды и пакетика приправы"),
-            MenuItem("Мисо 'Извините'", 250, "Мы просто налили соевый соус в горячую воду. Извинитесь!"),
-            MenuItem("Загоревший Медведь", 2800, "Богат железом"),
+            {"name": "Том Ям 'Вызовите скорую'", "price": 420, "desc": "Настолько острый, что вы начнёте видеть звуки"},
+            {"name": "Борщ 'Я'", "price": 290, "desc": "Безобидный борщ, в принципе как и название"},
+            {"name": "Суп 'Доширак Делюкс'", "price": 15000, "desc": "С добавкой в виде сухариков, надежды и пакетика приправы"},
+            {"name": "Мисо 'Извините'", "price": 250, "desc": "Мы просто налили соевый соус в горячую воду. Извинитесь!"},
+            {"name": "Загоревший Медведь", "price": 2800, "desc": "Богат железом"},
         ]
     },
     "5": {
-        "name": "Напиток's",
+        "name": "Напитки",
         "items": [
-            MenuItem("Энергетик 'Дедлайн'", 150, "Сон отменяется. Привет, тахикардия и новые идеи в 4 утра"),
-            MenuItem("Чай 'Прокрастинация'", 180, "Пока заваривается, можно отложить все дела на завтра"),
-            MenuItem("Вода 'Святая'", 120, "Святая потому что бомж похожий на Исуса плюнул в эту воду"),
-            MenuItem("Компот 'Error'", 190, "... Ну видите ошибка вылетела, перезайдите!"),
-            MenuItem("Напиток из 2027", 10000000000, "Вкус из будущего. Не для старых кошельков"),
+            {"name": "Энергетик 'Дедлайн'", "price": 150, "desc": "Сон отменяется. Привет, тахикардия и новые идеи в 4 утра"},
+            {"name": "Чай 'Прокрастинация'", "price": 180, "desc": "Пока заваривается, можно отложить все дела на завтра"},
+            {"name": "Вода 'Святая'", "price": 120, "desc": "Святая потому что бомж похожий на Исуса плюнул в эту воду"},
+            {"name": "Компот 'Error'", "price": 190, "desc": "... Ну видите ошибка вылетела, перезайдите!"},
+            {"name": "Напиток из 2027", "price": 10000000000, "desc": "Вкус из будущего. Не для старых кошельков"},
         ]
     },
 }
 
+cart = []
 
-def show_main_menu():
-    print("Загрузка меню")
-    time.sleep(1)
-    print(".")
-    time.sleep(1)
-    print("..")
-    time.sleep(1)
-    print("...")
-    time.sleep(1)
-    print("Загрузка завершена!")
-    print("\n" + "ඞ" * 22)
+def show_menu():
+    print("\n" + "=" * 50)
     print(" РЕСТОРАН 'В ПОДВАЛЕ'")
-    for key, category in MENU.items():
-        print(f"  [{key}]  {category['name']}")
-    print("☭" * 22)
+    print("=" * 50)
+    for key in menu:
+        print(f"  [{key}]  {menu[key]['name']}")
+    print("-" * 50)
     print("  [К]  Посмотреть корзину")
     print("  [В]  Выход")
-    print("ඞ" * 22)
+    print("=" * 50)
 
-
-def show_category(category_key):
-    category = MENU[category_key]
-    print("\n" + "ඞ" * 22)
+def show_category(key):
+    category = menu[key]
+    print("\n" + "=" * 50)
     print(f"  {category['name']}")
-    for i, item in enumerate(category["items"], 1):
-        print(f"  [{i}]  {item}")
-        if item.description:
-            print(f"        ↳ {item.description}")
-    print("☭" * 22)
+    print("=" * 50)
+    for i in range(len(category["items"])):
+        item = category["items"][i]
+        print(f"  [{i + 1}]  {item['name']} — {item['price']} ₽")
+        if item["desc"] != "":
+            print(f"        ↳ {item['desc']}")
+    print("-" * 50)
     print("  [Н]  ← Назад в главное меню")
-    print("ඞ" * 22)
+    print("=" * 50)
 
+def show_cart():
+    if len(cart) == 0:
+        print("\nКорзина пуста.\n")
+        return
+    print("\n" + "=" * 50)
+    print(" ВАША КОРЗИНА")
+    print("=" * 50)
+    total = 0
+    for i in range(len(cart)):
+        item = cart[i]
+        print(f"  • {item['name']}  x{item['qty']}  —  {item['price'] * item['qty']} ₽")
+        total = total + item['price'] * item['qty']
+    print("-" * 50)
+    print(f"  Итого: {total} ₽")
+    print("=" * 50 + "\n")
 
-def process_payment(cart):
-    total = cart.total()
-    print("\n" + "ඞ" * 22)
+def get_total():
+    total = 0
+    for i in range(len(cart)):
+        total = total + cart[i]['price'] * cart[i]['qty']
+    return total
+
+def pay():
+    total = get_total()
+    print("\n" + "=" * 50)
     print("ОПЛАТА ЗАКАЗА")
+    print("=" * 50)
     print(f"  Сумма к оплате: {total} ₽")
-    print("☭" * 22)
+    print("-" * 50)
     print("  Выберите способ оплаты:")
-    print("  [1] Наличные (мелочь)")
-    print("  [2] Банковская карта (А сколько вам лет? Случаем не 18-20?)")
+    print("  [1] Наличные")
+    print("  [2] Банковская карта")
     print("  [3] СБП (QR-код)")
-    print("ඞ" * 22)
+    print("=" * 50)
 
-    while True:
-        choice = input("\nВаш выбор: ").strip()
-        if choice == "1":
-            while True:
-                try:
-                    cash = float(input(f"Внесите сумму (не менее {total} ₽): "))
-                    if cash >= total:
-                        change = cash - total
-                        print(f"\nОплата принята наличными!")
-                        if change > 0:
-                            print(f"Ваша сдача: {change:.2f} ₽ (За что?! Только не двоечкой!)")
-                        break
-                    else:
-                        print(f"Недостаточно средств. Нужно ещё {total - cash:.2f} ₽")
-                except ValueError:
-                    print("Введите число, а не название криптовалюты.")
-            break
-        elif choice == "2":
-            print("\nПриложите карту к терминалу")
-            time.sleep(1.5)
-            print("Обработка платежа")
-            time.sleep(2)
-            print(".")
-            time.sleep(1)
-            print("..")
-            time.sleep(1)
-            print("...")
-            time.sleep(1)
-            print("Оплата картой прошла успешно!")
-            break
-        elif choice == "3":
-            print("\nСгенерирован QR-код для оплаты через СБП")
-            print("   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓")
-            print("   ▓  [QR: PAY-" + str(total) + "]  ▓")
-            print("   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓")
-            print("Ожидание подтверждения...")
-            time.sleep(3)
-            print("Платёж получен через СБП!")
-            break
+    choice = input("\nВаш выбор: ").strip()
+    
+    if choice == "1":
+        cash = float(input(f"Внесите сумму (не менее {total} ₽): "))
+        if cash >= total:
+            print(f"\nОплата принята наличными!")
+            if cash - total > 0:
+                print(f"Ваша сдача: {cash - total} ₽")
         else:
-            print("Неверный выбор, попробуйте снова.")
+            print("Недостаточно средств.")
+    elif choice == "2":
+        print("\nПриложите карту к терминалу...")
+        time.sleep(1.5)
+        print("Обработка платежа...")
+        time.sleep(2)
+        print("Оплата картой прошла успешно!")
+    elif choice == "3":
+        print("\nQR-код для оплаты через СБП:")
+        print("   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓")
+        print("   ▓  [QR: PAY-" + str(total) + "]  ▓")
+        print("   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓")
+        print("Ожидание подтверждения...")
+        time.sleep(3)
+        print("Платёж получен через СБП!")
+    else:
+        print("Неверный выбор.")
 
-    print("\n" + "ඞ" * 22)
+    print("\n" + "=" * 50)
     print("ЧЕК")
-    print(f"  Ресторан 'В подвале'")
+    print("=" * 50)
+    print("  Ресторан 'В подвале'")
     print(f"  {datetime.now().strftime('%d.%m.%Y %H:%M')}")
-    print("☭" * 22)
-    for item, qty in cart.items:
-        print(f"  {item.name} x{qty}  —  {item.price * qty} ₽")
-    print("☭" * 22)
+    print("-" * 50)
+    for i in range(len(cart)):
+        item = cart[i]
+        print(f"  {item['name']} x{item['qty']}  —  {item['price'] * item['qty']} ₽")
+    print("-" * 50)
     print(f"  ИТОГО: {total} ₽")
-    print("ඞ" * 22)
+    print("=" * 50)
     print("\nСпасибо за заказ! Приятного аппетита и без жертв!\n")
 
-
-
 def main():
-    cart = Cart()
     print("\nДобро пожаловать в ресторан 'В подвале'!")
 
     while True:
-        show_main_menu()
+        show_menu()
         choice = input("\nВыберите категорию: ").strip().upper()
 
         if choice == "В":
-            if cart.count() > 0:
-                confirm = input("\nВ корзине есть товары. Оформить заказ перед выходом? (д/н): ").strip().lower()
+            if len(cart) > 0:
+                confirm = input("\nВ корзине есть товары. Оформить заказ? (д/н): ").strip().lower()
                 if confirm == "д":
-                    cart.display()
-                    process_payment(cart)
-
-            print("\nДо свидания! Заходите ещё (но лучше не надо).\n")
+                    show_cart()
+                    pay()
+                    break
+            print("\nДо свидания!\n")
             break
 
         elif choice == "К":
-            cart.display()
-            if cart.count() > 0:
-                action = input("[О] Оформить заказ  [У] Удалить всё  [ENTER] Назад: ").strip().upper()
+            show_cart()
+            if len(cart) > 0:
+                action = input("[О] Оформить  [У] Удалить всё  [ENTER] Назад: ").strip().upper()
                 if action == "О":
-                    process_payment(cart)
-                    cart = Cart()
+                    pay()
                     break
                 elif action == "У":
-                    cart = Cart()
-                    print("\nКорзина очищена. Вы сэкономили кучу денег!")
+                    cart.clear()
+                    print("\nКорзина очищена.")
 
-        elif choice in MENU:
+        elif choice in menu:
             while True:
                 show_category(choice)
-                item_choice = input("\nВыберите блюдо (номер) или [Н] назад: ").strip().upper()
+                item_choice = input("\nВыберите блюдо (номер) или [Н] назад: ").strip()
 
-                if item_choice == "Н":
+                if item_choice.upper() == "Н":
                     break
 
                 try:
                     idx = int(item_choice) - 1
-                    if 0 <= idx < len(MENU[choice]["items"]):
-                        item = MENU[choice]["items"][idx]
-                        qty_str = input(f"Сколько порций '{item.name}' добавить? [1]: ").strip()
-                        qty = int(qty_str) if qty_str else 1
-
-                        if qty <= 0:
-                            print("Количество должно быть больше нуля. Мы не в минусе работаем.")
-                            continue
-
-                        cart.add(item, qty)
-                        print(f"\nДобавлено: {item.name} x{qty}")
+                    if 0 <= idx < len(menu[choice]["items"]):
+                        item = menu[choice]["items"][idx]
+                        qty_str = input(f"Сколько порций '{item['name']}' добавить? [1]: ").strip()
+                        qty = int(qty_str) if qty_str != "" else 1
+                        cart.append({"name": item["name"], "price": item["price"], "qty": qty})
+                        print(f"\nДобавлено: {item['name']} x{qty}")
                     else:
-                        print("Нет такого блюда. Вы что, из будущего?")
-                        time.sleep(2)
-                except ValueError:
-                    print("Введите номер блюда, а не секретный код.")
+                        print("Нет такого блюда.")
+                except:
+                    print("Введите номер блюда.")
 
-
-if __name__ == "__main__":
-    main()
+main()
